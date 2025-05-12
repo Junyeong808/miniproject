@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>실시간 센서 데이터</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.socket.io/4.5.1/socket.io.min.js"></script>
+    <style>
+        .charts-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            width: 900px; 
+            height: 300px; 
+            margin: 0 auto; 
+        }
+        canvas {
+            margin: 10px;
+            width: 300px;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>실시간 센서 데이터</h1>
+
+    <div class="charts-container">
+        <canvas id="temperature-graph" width="300" height="200"></canvas>
+        <canvas id="humidity-graph" width="300" height="200"></canvas>
+        <canvas id="cds-graph" width="300" height="200"></canvas>
+    </div>
+
+    <script>
+        
+        const socket = io.connect('http://' + document.domain + ':' + location.port);
+        
+        let temperatureData = [];
+        let humidityData = [];
+        let cdsData = [];
+        let timeData = [];
+        
+        const temperatureCtx = document.getElementById('temperature-graph').getContext('2d');
+        const humidityCtx = document.getElementById('humidity-graph').getContext('2d');
+        const cdsCtx = document.getElementById('cds-graph').getContext('2d');
+        
+        const temperatureChart = new Chart(temperatureCtx, {
+            type: 'line', 
+            data: {
+                labels: [],
+                datasets: [{
+                    label: '온도',
+                    data: [],
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    fill: true,
+                    tension: 0.4, 
+                }]
+            },
+            options: {
+                scales: {
+                    x: { title: { display: true, text: '시간' } },
+                    y: { title: { display: true, text: '온도(°C)' } }
+                }
+            }
+        });
+        
+        const humidityChart = new Chart(humidityCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: '습도',
+                    data: [],
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    fill: true,
+                    tension: 0.4,
+                }]
+            },
+            options: {
+                scales: {
+                    x: { title: { display: true, text: '시간' } },
+                    y: { title: { display: true, text: '습도(%)' } }
+                }
+            }
+        });
+        
+        const cdsChart = new Chart(cdsCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: '조도(CDS)',
+                    data: [],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    fill: true,
+                    tension: 0.4,
+                }]
+            },
+            options: {
+                scales: {
+                    x: { title: { display: true, text: '시간' } },
+                    y: { title: { display: true, text: '조도 값' } }
+                }
+            }
+        });
+        
+        socket.on('sensor_data', function(data) {
+    const currentTime = new Date().toLocaleTimeString();
+    
+    timeData.push(currentTime);
+    temperatureData.push(data.temperature);
+    humidityData.push(data.humidity);
+    cdsData.push(data.cds);
+    
+    if (timeData.length > 20) {
+        timeData = timeData.slice(1); 
+        temperatureData = temperatureData.slice(1);
+        humidityData = humidityData.slice(1);
+        cdsData = cdsData.slice(1);
+    }
+    
+    temperatureChart.data.labels = timeData;
+    temperatureChart.data.datasets[0].data = temperatureData;
+    temperatureChart.update();
+    
+    humidityChart.data.labels = timeData;
+    humidityChart.data.datasets[0].data = humidityData;
+    humidityChart.update();
+    
+    cdsChart.data.labels = timeData;
+    cdsChart.data.datasets[0].data = cdsData;
+    cdsChart.update();
+
+    console.log("Updated Data:", cdsData); 
+});        
+    </script>
+</body>
+</html>
