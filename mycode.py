@@ -54,11 +54,14 @@ class YOLOWebcam:
         results = self.model(frame)
         rendered_frame = results[0].plot()
         object_names = []
+        
         if results[0].boxes is not None:
+            confidence = float(box.conf[0])
             for box in results[0].boxes:
-                class_id = int(box.cls[0])
-                object_name = results[0].names[class_id]
-                object_names.append(object_name)
+                if confidence >= 0.9:
+                    class_id = int(box.cls[0])
+                    object_name = results[0].names[class_id]
+                    object_names.append(object_name)
         return rendered_frame, object_names
 
     def save_to_database(self, image_path, object_names):
