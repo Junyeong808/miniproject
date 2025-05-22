@@ -58,7 +58,7 @@ class YOLOWebcam:
         if results[0].boxes is not None:
             confidence = float(box.conf[0])
             for box in results[0].boxes:
-                if confidence >= 0.9:
+                if confidence >= 0.7:
                     class_id = int(box.cls[0])
                     object_name = results[0].names[class_id]
                     object_names.append(object_name)
