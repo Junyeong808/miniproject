@@ -28,9 +28,9 @@ Tkinter GUI를 통해 웹캠 사진을 캡처하는 기능도 포함되어 있�
 ---
 
 ## 디렉토리 구조
-├── best.pt # YOLOv8 훈련된 모델 파일
-├── main.py # 웹캠 객체 탐지 및 MySQL 저장 스크립트
-├── app.py # Flask 및 WebSocket 서버 스크립트
-├── index.html # 실시간 센서 데이터 시각화 웹 페이지
-├── face_cascade_captured.py # Tkinter 웹캠 사진 캡처 프로그램
-├── captured_images/ # 탐지된 이미지 저장 폴더
+├── best.pt                    # YOLOv8 훈련된 모델 파일
+├── main.py                    # 웹캠 객체 탐지 및 MySQL 저장 스크립트
+├── app.py                     # Flask 및 WebSocket 서버 스크립트
+├── index.html                 # 실시간 센서 데이터 시각화 웹 페이지
+├── face_cascade_captured.py   # Tkinter 웹캠 사진 캡처 프로그램
+├── captured_images/           # 탐지된 이미지 저장 폴더
